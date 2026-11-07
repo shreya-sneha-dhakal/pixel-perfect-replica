@@ -34,7 +34,9 @@ describe("Furniture catalog retailer listings", () => {
     const onAddProduct = vi.fn();
     render(<FurnitureCatalog products={furnitureProducts} onAddProduct={onAddProduct} />);
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Add to Room" })[0]);
+    const firstAddButton = screen.getAllByRole("button", { name: "Add to Room" })[0];
+    if (!firstAddButton) throw new Error("Expected at least one Add to Room button");
+    fireEvent.click(firstAddButton);
 
     expect(onAddProduct).toHaveBeenCalledTimes(1);
     expect(onAddProduct).toHaveBeenCalledWith(furnitureProducts[0]);
