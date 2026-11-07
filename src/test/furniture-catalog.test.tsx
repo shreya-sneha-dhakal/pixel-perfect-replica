@@ -19,6 +19,12 @@ describe("Furniture catalog retailer listings", () => {
     expect(sofa).toMatchObject({ widthM: 2.270125, depthM: 0.949325, heightM: 0.828675, priceUSD: 1299 });
   });
 
+  it("stores the audited UPPLAND promotional price of 699 USD", () => {
+    const sofa = furnitureProducts.find((product) => product.id === "ikea-uppland-19384116");
+
+    expect(sofa?.priceUSD).toBe(699);
+  });
+
   it("opens a verified retailer listing in a new tab without labeling it as a sample", () => {
     render(<FurnitureCatalog products={furnitureProducts} onAddProduct={() => {}} />);
 
