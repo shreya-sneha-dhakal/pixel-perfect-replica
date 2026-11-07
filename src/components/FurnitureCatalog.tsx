@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import type { FurnitureProduct } from "../types/furniture";
+import { fmtDims, fmtPrice, ProductImage, retailerName } from "./furniture-display";
+import { PhotoSearch } from "./PhotoSearch";
 
 export interface FurnitureCatalogProps {
   products: FurnitureProduct[];
@@ -9,53 +11,11 @@ export interface FurnitureCatalogProps {
 const CATEGORIES = ["All", "Sofas", "Beds", "Desks", "Chairs", "Tables"] as const;
 type SortOrder = "none" | "asc" | "desc";
 
-const fmtPrice = (p: number | null) =>
-  p == null
-    ? "Price unavailable"
-    : new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: Number.isInteger(p) ? 0 : 2,
-        maximumFractionDigits: 2,
-      }).format(p);
-
-const fmtDims = (p: FurnitureProduct) => `${p.widthM.toFixed(2)} × ${p.depthM.toFixed(2)} × ${p.heightM.toFixed(2)} m`;
-
-const retailerName = (url: string) => {
-  const hostname = new URL(url).hostname;
-  if (hostname.includes("ikea")) return "IKEA";
-  if (hostname.includes("target")) return "Target";
-  return "Retailer";
-};
-
-function ProductImage({ product }: { product: FurnitureProduct }) {
-  const [failed, setFailed] = useState(false);
-  return (
-    <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
-      {product.imageUrl && !failed ? (
-        <img
-          src={product.imageUrl}
-          alt={product.title}
-          loading="lazy"
-          width={944}
-          height={704}
-          onError={() => setFailed(true)}
-          className="h-full w-full object-cover"
-        />
-      ) : (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground">
-          <span className="font-display text-4xl">{product.category.charAt(0)}</span>
-          <span className="text-xs uppercase tracking-widest">Image unavailable</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogProps) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("All");
   const [sort, setSort] = useState<SortOrder>("none");
+  const [photoOpen, setPhotoOpen] = useState(false);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -76,14 +36,24 @@ export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogPro
   return (
     <section className="w-full">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <input
+        <div className="flex w-full gap-2 md:max-w-lg">
+          <input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search furniture…"
           aria-label="Search products by title"
           className="w-full rounded-full border border-input bg-card px-5 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring md:max-w-sm"
-        />
+          />
+          <button
+            type="button"
+            onClick={() => setPhotoOpen((o) => !o)}
+            aria-expanded={photoOpen}
+            className="shrink-0 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
+            Search by Photo
+          </button>
+        </div>
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortOrder)}
@@ -95,6 +65,8 @@ export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogPro
           <option value="desc">Price: High to Low</option>
         </select>
       </div>
+
+      {photoOpen && <PhotoSearch products={products} onAddProduct={onAddProduct} onClose={() => setPhotoOpen(false)} />}
 
       <div className="mb-8 flex flex-wrap gap-2" role="group" aria-label="Filter by category">
         {CATEGORIES.map((c) => (
