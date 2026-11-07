@@ -151,6 +151,7 @@ export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogPro
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-full border border-input px-4 py-2.5 text-sm font-medium text-foreground hover:bg-accent"
+                      aria-label={`View ${p.title} at ${retailerName(p.retailerUrl)} (opens in a new tab)`}
                     >
                       View at Retailer
                     </a>
