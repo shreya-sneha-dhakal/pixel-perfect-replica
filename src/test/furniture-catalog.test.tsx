@@ -22,7 +22,7 @@ describe("Furniture catalog retailer listings", () => {
   it("opens a verified retailer listing in a new tab without labeling it as a sample", () => {
     render(<FurnitureCatalog products={furnitureProducts} onAddProduct={() => {}} />);
 
-    const link = screen.getByRole("link", { name: /View KIVIK Sofa at IKEA/ });
+    const link = screen.getByRole("link", { name: /View KIVIK Sofa, Grann\/Bomstad black at IKEA/ });
     expect(link).toHaveAttribute("href", "https://www.ikea.com/us/en/p/kivik-sofa-grann-bomstad-black-80519531/");
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", expect.stringContaining("noopener"));
