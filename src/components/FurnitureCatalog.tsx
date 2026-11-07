@@ -14,6 +14,30 @@ const fmtPrice = (p: number | null) =>
 
 const fmtDims = (p: FurnitureProduct) => `${p.widthM.toFixed(2)} × ${p.depthM.toFixed(2)} × ${p.heightM.toFixed(2)} m`;
 
+function ProductImage({ product }: { product: FurnitureProduct }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
+      {product.imageUrl && !failed ? (
+        <img
+          src={product.imageUrl}
+          alt={product.title}
+          loading="lazy"
+          width={944}
+          height={704}
+          onError={() => setFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground">
+          <span className="font-display text-4xl">{product.category.charAt(0)}</span>
+          <span className="text-xs uppercase tracking-widest">Image unavailable</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogProps) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("All");
@@ -90,21 +114,12 @@ export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogPro
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((p) => (
             <li key={p.id} className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
-              <div className="aspect-[4/3] w-full bg-muted">
-                {p.imageUrl ? (
-                  <img src={p.imageUrl} alt={p.title} loading="lazy" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-muted-foreground">
-                    <span className="font-display text-4xl">{p.category.charAt(0)}</span>
-                    <span className="text-xs uppercase tracking-widest">Image placeholder</span>
-                  </div>
-                )}
-              </div>
+              <ProductImage product={p} />
               <div className="flex flex-1 flex-col gap-2 p-5">
-                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{p.category}</span>
+                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{p.category} · Sample</span>
                 <h3 className="font-display text-xl leading-tight text-card-foreground">{p.title}</h3>
                 <p className="text-sm text-muted-foreground">W × D × H: {fmtDims(p)}</p>
-                <p className="text-lg font-semibold text-foreground">{fmtPrice(p.priceUSD)}</p>
+                <p className="text-lg font-semibold text-foreground">{fmtPrice(p.priceUSD)} <span className="text-xs font-normal text-muted-foreground">sample price</span></p>
                 <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     type="button"
