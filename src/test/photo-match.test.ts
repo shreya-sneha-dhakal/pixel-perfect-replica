@@ -6,7 +6,7 @@ import { matchProducts } from "@/lib/photo-match";
 const sampleSofa = furnitureProducts.find((product) => product.id === "sofa-1");
 if (!sampleSofa) throw new Error("Expected the existing Linden sofa fixture");
 const colorScore = (searchColor: string | undefined, productColors: string[]) => matchProducts(
-  { category: "Sofas", primaryColor: searchColor },
+  { category: "Sofas", ...(searchColor === undefined ? {} : { primaryColor: searchColor }) },
   [sampleSofa],
   { [sampleSofa.id]: { colors: productColors, materials: [], styles: [], keywords: [] } },
 )[0]?.score;
@@ -47,7 +47,7 @@ describe("photo match ranking", () => {
   it("penalizes a clear recognized mismatch by exactly 20", () => {
     expect(colorScore("cream", ["rust", "terracotta", "burnt orange"])).toBe(80);
   });
-  it.each([[], ["unknown"], ["fabric"]])("does not penalize missing or unknown product colors: %j", (colors) => {
+  it.each([{ colors: [] }, { colors: ["unknown"] }, { colors: ["fabric"] }])("does not penalize missing or unknown product colors: $colors", ({ colors }) => {
     expect(colorScore("cream", colors)).toBe(100);
   });
   it("does not penalize unknown search color", () => {
