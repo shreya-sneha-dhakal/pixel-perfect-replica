@@ -14,6 +14,26 @@ const overlaps = (needle: string, haystack: string[]) => {
   return n.length > 0 && haystack.some((h) => words(h).some((w) => n.includes(w)));
 };
 
+// Broad appearance families, not exact paint colors or material identification.
+const colorFamilies = [
+  /\b(?:cream|beige|off white|offwhite|ivory|greige|white|taupe|ecru)\b/,
+  /\b(?:rust|terracotta|terra cotta|burnt orange|orange)\b/,
+  /\b(?:gray|grey|silver|charcoal)\b/,
+  /\b(?:brown|tan|walnut|chocolate|honey|natural wood|light wood|dark wood)\b/,
+  /\b(?:black|ebony)\b/,
+  /\b(?:blue|navy|cobalt|azure)\b/,
+  /\b(?:green|sage|olive|emerald)\b/,
+  /\b(?:teal|turquoise|cyan)\b/,
+  /\b(?:red|burgundy|maroon|crimson)\b/,
+  /\b(?:pink|rose|blush)\b/,
+  /\b(?:yellow|gold|golden|mustard)\b/,
+  /\b(?:purple|violet|lavender|lilac)\b/,
+];
+const colorGroups = (values: string[]) => {
+  const normalized = values.map((value) => value.toLowerCase().replace(/[^a-z]+/g, " "));
+  return colorFamilies.flatMap((pattern, index) => normalized.some((value) => pattern.test(value)) ? [index] : []);
+};
+
 /**
  * Ranks existing catalog products against an analysis. Category match dominates;
  * color, material, style and keywords break ties. Only same-category products
@@ -25,6 +45,7 @@ export function matchProducts(
   attributes: Record<string, ProductAttributes>,
   limit = 6,
 ): PhotoMatch[] {
+  const searchColors = colorGroups(analysis.primaryColor ? [analysis.primaryColor] : []);
   return products
     .filter((p) => p.category === analysis.category)
     .map((product) => {
@@ -32,9 +53,15 @@ export function matchProducts(
       const titleWords = words(product.title);
       const reasons = [`Same category: ${product.category}`];
       let score = 100;
-      if (analysis.primaryColor && overlaps(analysis.primaryColor, [...a.colors, ...titleWords])) {
+      const declaredColors = colorGroups(a.colors);
+      const bonusColors = colorGroups([...a.colors, product.title]);
+      const colorMatch = searchColors.some((color) => bonusColors.includes(color));
+      if (colorMatch) {
         score += 30;
         reasons.push(`Similar color (${analysis.primaryColor})`);
+      } else if (searchColors.length > 0 && declaredColors.length > 0) {
+        score -= 20;
+        reasons.push(`Different color (${analysis.primaryColor})`);
       }
       if (analysis.material && overlaps(analysis.material, a.materials)) {
         score += 20;
