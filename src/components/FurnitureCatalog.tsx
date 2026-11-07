@@ -14,6 +14,13 @@ const fmtPrice = (p: number | null) =>
 
 const fmtDims = (p: FurnitureProduct) => `${p.widthM.toFixed(2)} × ${p.depthM.toFixed(2)} × ${p.heightM.toFixed(2)} m`;
 
+const retailerName = (url: string) => {
+  const hostname = new URL(url).hostname;
+  if (hostname.includes("ikea")) return "IKEA";
+  if (hostname.includes("target")) return "Target";
+  return "Retailer";
+};
+
 function ProductImage({ product }: { product: FurnitureProduct }) {
   const [failed, setFailed] = useState(false);
   return (
