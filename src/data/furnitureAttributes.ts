@@ -11,7 +11,7 @@ export interface ProductAttributes {
 }
 
 export const furnitureAttributes: Record<string, ProductAttributes> = {
-  "sofa-1": { colors: ["grey", "gray"], materials: ["fabric"], styles: ["modern", "minimalist"], keywords: ["three-seat", "armrests", "cushions", "straight"] },
+  "sofa-1": { colors: ["beige", "greige", "cream"], materials: ["fabric"], styles: ["modern", "minimalist"], keywords: ["three-seat", "armrests", "cushions", "straight"] },
   "sofa-2": { colors: ["rust", "terracotta", "burnt orange"], materials: ["fabric"], styles: ["modern", "mid-century"], keywords: ["loveseat", "two-seat", "small", "armrests", "curved arms", "upholstered", "wooden legs", "compact"] },
   "sofa-3": { colors: ["grey", "gray"], materials: ["fabric"], styles: ["modern", "scandinavian"], keywords: ["sectional", "corner", "l-shaped", "large"] },
   "bed-1": { colors: ["brown", "wood"], materials: ["wood"], styles: ["modern", "minimalist"], keywords: ["platform", "queen", "low", "headboard"] },
