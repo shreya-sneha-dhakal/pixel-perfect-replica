@@ -42,7 +42,7 @@ function Index() {
             <p className="mt-2 text-sm text-muted-foreground">Click “Add to Room” on any product.</p>
           ) : (
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-foreground">Last added: <strong>{selected[0].title}</strong> ({selected.length} total)</span>
+              <span className="text-foreground">Last added: <strong>{selected[0]?.title}</strong> ({selected.length} total)</span>
               <button type="button" onClick={() => setSelected([])} className="ml-auto text-muted-foreground underline">Clear</button>
             </div>
           )}
