@@ -123,10 +123,20 @@ export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogPro
             <li key={p.id} className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
               <ProductImage product={p} />
               <div className="flex flex-1 flex-col gap-2 p-5">
-                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{p.category} · Sample</span>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                    {p.category}{p.retailerUrl ? ` · ${retailerName(p.retailerUrl)}` : ""}
+                  </span>
+                  <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${p.retailerUrl ? "bg-secondary text-secondary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    {p.retailerUrl ? "Verified retailer" : "Sample product"}
+                  </span>
+                </div>
                 <h3 className="font-display text-xl leading-tight text-card-foreground">{p.title}</h3>
                 <p className="text-sm text-muted-foreground">W × D × H: {fmtDims(p)}</p>
-                <p className="text-lg font-semibold text-foreground">{fmtPrice(p.priceUSD)} <span className="text-xs font-normal text-muted-foreground">sample price</span></p>
+                <p className="text-lg font-semibold text-foreground">
+                  {fmtPrice(p.priceUSD)}{" "}
+                  <span className="text-xs font-normal text-muted-foreground">{p.retailerUrl ? "price at verification" : "sample price"}</span>
+                </p>
                 <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     type="button"
