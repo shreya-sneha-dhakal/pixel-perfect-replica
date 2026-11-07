@@ -10,9 +10,23 @@ const CATEGORIES = ["All", "Sofas", "Beds", "Desks", "Chairs", "Tables"] as cons
 type SortOrder = "none" | "asc" | "desc";
 
 const fmtPrice = (p: number | null) =>
-  p == null ? "Price unavailable" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(p);
+  p == null
+    ? "Price unavailable"
+    : new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: Number.isInteger(p) ? 0 : 2,
+        maximumFractionDigits: 2,
+      }).format(p);
 
 const fmtDims = (p: FurnitureProduct) => `${p.widthM.toFixed(2)} × ${p.depthM.toFixed(2)} × ${p.heightM.toFixed(2)} m`;
+
+const retailerName = (url: string) => {
+  const hostname = new URL(url).hostname;
+  if (hostname.includes("ikea")) return "IKEA";
+  if (hostname.includes("target")) return "Target";
+  return "Retailer";
+};
 
 function ProductImage({ product }: { product: FurnitureProduct }) {
   const [failed, setFailed] = useState(false);
@@ -116,10 +130,20 @@ export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogPro
             <li key={p.id} className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
               <ProductImage product={p} />
               <div className="flex flex-1 flex-col gap-2 p-5">
-                <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{p.category} · Sample</span>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                    {p.category}{p.retailerUrl ? ` · ${retailerName(p.retailerUrl)}` : ""}
+                  </span>
+                  <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${p.retailerUrl ? "bg-secondary text-secondary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    {p.retailerUrl ? "Verified retailer" : "Sample product"}
+                  </span>
+                </div>
                 <h3 className="font-display text-xl leading-tight text-card-foreground">{p.title}</h3>
                 <p className="text-sm text-muted-foreground">W × D × H: {fmtDims(p)}</p>
-                <p className="text-lg font-semibold text-foreground">{fmtPrice(p.priceUSD)} <span className="text-xs font-normal text-muted-foreground">sample price</span></p>
+                <p className="text-lg font-semibold text-foreground">
+                  {fmtPrice(p.priceUSD)}{" "}
+                  <span className="text-xs font-normal text-muted-foreground">{p.retailerUrl ? "price at verification" : "sample price"}</span>
+                </p>
                 <div className="mt-auto flex flex-wrap gap-2 pt-3">
                   <button
                     type="button"
@@ -134,6 +158,7 @@ export function FurnitureCatalog({ products, onAddProduct }: FurnitureCatalogPro
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-full border border-input px-4 py-2.5 text-sm font-medium text-foreground hover:bg-accent"
+                      aria-label={`View ${p.title} at ${retailerName(p.retailerUrl)} (opens in a new tab)`}
                     >
                       View at Retailer
                     </a>

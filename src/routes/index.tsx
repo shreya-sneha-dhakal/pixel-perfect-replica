@@ -33,7 +33,7 @@ function Index() {
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         <div className="mb-8 rounded-2xl border border-border bg-secondary px-5 py-4 text-sm text-secondary-foreground">
-          <strong>Sample data:</strong> these demo products and prices are illustrative, not live retailer listings.
+          <strong>Catalog note:</strong> verified listings link to IKEA or Target, where current details and availability may change. Products labeled “Sample” are illustrative demo items, not retailer listings.
         </div>
 
         <div className="mb-10 rounded-2xl border border-border bg-card p-5" aria-live="polite">
