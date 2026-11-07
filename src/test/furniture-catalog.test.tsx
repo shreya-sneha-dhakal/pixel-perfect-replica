@@ -28,6 +28,7 @@ describe("Furniture catalog retailer listings", () => {
     expect(link).toHaveAttribute("rel", expect.stringContaining("noopener"));
     expect(screen.getAllByText("Verified retailer")).toHaveLength(6);
     expect(screen.getAllByText("Sample product")).toHaveLength(15);
+    expect(screen.getByText("$109.99", { exact: false })).toBeInTheDocument();
   });
 
   it("passes the selected product to onAddProduct", () => {

@@ -10,7 +10,14 @@ const CATEGORIES = ["All", "Sofas", "Beds", "Desks", "Chairs", "Tables"] as cons
 type SortOrder = "none" | "asc" | "desc";
 
 const fmtPrice = (p: number | null) =>
-  p == null ? "Price unavailable" : new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(p);
+  p == null
+    ? "Price unavailable"
+    : new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: Number.isInteger(p) ? 0 : 2,
+        maximumFractionDigits: 2,
+      }).format(p);
 
 const fmtDims = (p: FurnitureProduct) => `${p.widthM.toFixed(2)} × ${p.depthM.toFixed(2)} × ${p.heightM.toFixed(2)} m`;
 
