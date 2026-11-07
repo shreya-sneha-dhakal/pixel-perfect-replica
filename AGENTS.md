@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Photo search
+- Photo analysis runs server-side via Lovable AI Gateway (src/lib/photo-analysis.server.ts); matching is a pure client function over existing catalog products only, with descriptors kept in src/data/furnitureAttributes.ts so FurnitureProduct stays unchanged.
